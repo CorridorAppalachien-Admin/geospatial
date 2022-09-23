@@ -221,6 +221,7 @@ odoo.define("base_geoengine.GeoengineRenderer", function(require) {
                     view: new ol.View({
                         center: [0, 0],
                         zoom: 2,
+                        projection: 'EPSG:32188'
                     }),
                     controls: ol.control
                         .defaults()
