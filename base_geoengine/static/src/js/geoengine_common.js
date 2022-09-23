@@ -128,6 +128,22 @@ odoo.define("base_geoengine.BackgroundLayers", function(require) {
                                     })
                                 );
                                 break;
+                            case "d_wms":
+                                console.log("geoengine_commion WMS LAYER");
+                                out.push(
+                                    new ol.layer.Image({
+                                        title: "Relief",
+                                        source: new ol.source.ImageWMS( {
+                                            url: 'https://geoegl.msp.gouv.qc.ca/ws/mffpecofor.fcgi',
+                                            params: {
+                                                'layers': 'lidar_ombre',
+                                                'crs': 'EPSG:2950',
+                                                'format': 'image/png',
+                                            }
+                                        }),
+                                    })
+                                );
+                                break;
                             default:
                                 var customLayers = this.handleCustomLayers(l);
                                 if (customLayers.length) {
