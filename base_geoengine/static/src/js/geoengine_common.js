@@ -26,6 +26,7 @@ odoo.define("base_geoengine.geoengine_common", function() {
             "/base_geoengine/static/lib/ol3-layerswitcher.js",
             "/base_geoengine/static/lib/chromajs-0.8.0/chroma.js",
             "/base_geoengine/static/lib/geostats-1.4.0/geostats.js",
+            "/base_geoengine/static/lib/proj4js-2.8.0/proj4.js",
         ],
     };
 
