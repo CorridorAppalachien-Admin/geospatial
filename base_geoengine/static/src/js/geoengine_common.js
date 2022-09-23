@@ -26,6 +26,7 @@ odoo.define("base_geoengine.geoengine_common", function() {
             "/base_geoengine/static/lib/ol3-layerswitcher.js",
             "/base_geoengine/static/lib/chromajs-0.8.0/chroma.js",
             "/base_geoengine/static/lib/geostats-1.4.0/geostats.js",
+            "/base_geoengine/static/lib/proj4js-2.8.0/proj4.js",
         ],
     };
 
@@ -53,6 +54,7 @@ odoo.define("base_geoengine.BackgroundLayers", function(require) {
                 layersCfg,
                 function(l) {
                     if (l.is_wmts) {
+
                         var source_opt = {
                             layer: l.name,
                             matrixSet: l.matrix_set,
@@ -111,7 +113,6 @@ odoo.define("base_geoengine.BackgroundLayers", function(require) {
                         if (l.params) {
                             source_opt.dimensions = JSON.parse(l.params);
                         }
-
                         source_opt.tileGrid = new ol.tilegrid.WMTS(tilegrid_opt);
                         layer_opt.source = new ol.source.WMTS(source_opt);
                         out.push(new ol.layer.Tile(layer_opt));
@@ -124,6 +125,21 @@ odoo.define("base_geoengine.BackgroundLayers", function(require) {
                                         visible: !l.overlay,
                                         type: "base",
                                         source: new ol.source.OSM(),
+                                    })
+                                );
+                                break;
+                            case "d_wms":
+                                console.log("geoengine_commion WMS LAYER");
+                                out.push(
+                                    new ol.layer.Image({
+                                        source: new ol.source.ImageWMS( {
+                                            url: 'https://geoegl.msp.gouv.qc.ca/ws/mffpecofor.fcgi',
+                                            params: {
+                                                'layers': 'lidar_ombre',
+                                                'crs': 'EPSG:4326',
+                                                'format': 'image/png',
+                                            }
+                                        }),
                                     })
                                 );
                                 break;

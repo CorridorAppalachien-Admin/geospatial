@@ -287,6 +287,7 @@ odoo.define("base_geoengine.geoengine_widgets", function(require) {
                     }),
                 });
                 this.map.addLayer(this.vectorLayer);
+                console.log("WEWEWEWEWEWEWEWEWEWEWEWEWEW");
 
                 this.format = new ol.format.GeoJSON({
                     internalProjection: this.map.getView().getProjection(),

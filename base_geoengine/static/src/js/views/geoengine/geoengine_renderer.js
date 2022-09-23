@@ -153,6 +153,7 @@ odoo.define("base_geoengine.GeoengineRenderer", function(require) {
                 this.mapOptions.geoengine_layers.actives,
                 function(item) {
                     this.geometryFields.push(item.geo_field_id[1]);
+                    console.log("geometryFieldsWWWWWWWWWWWWWWW ", item.geo_field_id[1])
                 }.bind(this)
             );
         },
@@ -207,6 +208,9 @@ odoo.define("base_geoengine.GeoengineRenderer", function(require) {
          * @returns {jQueryElement} a jquery element <tbody>
          */
         _renderMap: function() {
+            proj4.defs("EPSG:32188","+proj=tmerc +lat_0=0 +lon_0=-73.5 +k=0.9999 +x_0=304800 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs +type=crs");
+            ol.proj.setProj4(proj4);
+
             if (_.isUndefined(this.map)) {
                 this.zoomToExtentCtrl = new ol.control.ZoomToExtent();
                 var backgrounds = this.mapOptions.geoengine_layers.backgrounds;
@@ -219,8 +223,9 @@ odoo.define("base_geoengine.GeoengineRenderer", function(require) {
                     ],
                     target: "olmap",
                     view: new ol.View({
-                        center: [0, 0],
-                        zoom: 2,
+                        center: [391854, 5007460],
+                        zoom: 14,
+                        projection: 'EPSG:32188'
                     }),
                     controls: ol.control
                         .defaults()
@@ -291,7 +296,7 @@ odoo.define("base_geoengine.GeoengineRenderer", function(require) {
                     title: cfg.name,
                 });
             }
-            var vectorSource = new ol.source.Vector();
+            var vectorSource = new ol.source.Vector({projection: 'EPSG:32188'});
             _.each(
                 data,
                 function(item) {
@@ -308,15 +313,27 @@ odoo.define("base_geoengine.GeoengineRenderer", function(require) {
 
                     var json_geometry = item.data[cfg.geo_field_id[1]];
                     if (json_geometry) {
+                        console.log(json_geometry);
                         var feature = new ol.Feature({
                             geometry: new ol.format.GeoJSON().readGeometry(
                                 json_geometry
-                            ),
+                            ).transform('EPSG:32188', 'EPSG:4326'),
+
                             attributes: attributes,
                         });
+                        var newfeature = new ol.format.GeoJSON().writeFeature(feature, {dataProjection: 'EPSG:4326', featureProjection: 'EPSG:32188'});
+                        //console.log("newfeature", new ol.format.GeoJSON().readFeature(newfeature));
                         var id = String(attributes.id);
                         this.ids[id] = item.id;
-                        vectorSource.addFeature(feature);
+                        // console.log("feature", new ol.format.GeoJSON().readFeature(feature));
+
+
+                        console.log("feature", new ol.format.GeoJSON().readProjection());
+                        //var newfeature = new ol.format.WKT().writeFeature(feature);
+
+
+
+                        vectorSource.addFeature(new ol.format.GeoJSON().readFeature(newfeature));
                     }
                 }.bind(this)
             );
@@ -673,20 +690,20 @@ odoo.define("base_geoengine.GeoengineRenderer", function(require) {
             this.map.addOverlay(this.overlayPopup);
 
             // Zoom to data extent
-            if (data.length) {
-                var extent = vectorLayers[0].getSource().getExtent();
-                this.zoomToExtentCtrl.extent_ = extent;
-                this.zoomToExtentCtrl.changed();
-
-                // When user quits fullscreen map, the size is set to undefined
-                // So we have to check this and recompute the size.
-                if (typeof this.map.getSize() === "undefined") {
-                    this.map.updateSize();
-                }
-                if (!ol.extent.isEmpty(extent)) {
-                    this.map.getView().fit(extent);
-                }
-            }
+            // if (data.length) {
+            //     var extent = vectorLayers[0].getSource().getExtent();
+            //     this.zoomToExtentCtrl.extent_ = extent;
+            //     this.zoomToExtentCtrl.changed();
+            //
+            //     // When user quits fullscreen map, the size is set to undefined
+            //     // So we have to check this and recompute the size.
+            //     if (typeof this.map.getSize() === "undefined") {
+            //         this.map.updateSize();
+            //     }
+            //     if (!ol.extent.isEmpty(extent)) {
+            //         this.map.getView().fit(extent);
+            //     }
+            // }
         },
 
         _updateInfoBoxSingle: function(features) {
