@@ -275,6 +275,8 @@ odoo.define("base_geoengine.geoengine_widgets", function(require) {
         },
 
         _renderMap: function() {
+            proj4.defs("EPSG:32188","+proj=tmerc +lat_0=0 +lon_0=-73.5 +k=0.9999 +x_0=304800 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs +type=crs");
+            ol.proj.setProj4(proj4);
             if (!this.map) {
                 var $el = this.$el[0];
                 $($el).css({width: "100%", height: "100%"});
@@ -284,6 +286,7 @@ odoo.define("base_geoengine.geoengine_widgets", function(require) {
                     view: new ol.View({
                         center: [0, 0],
                         zoom: 5,
+                        projection: 'EPSG:32188',
                     }),
                 });
                 this.map.addLayer(this.vectorLayer);

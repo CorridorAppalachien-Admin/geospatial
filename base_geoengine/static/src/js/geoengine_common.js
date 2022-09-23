@@ -119,6 +119,7 @@ odoo.define("base_geoengine.BackgroundLayers", function(require) {
                     } else {
                         switch (l.raster_type) {
                             case "osm":
+                                console.log("geoengine_commion OSM LAYER");
                                 out.push(
                                     new ol.layer.Tile({
                                         title: l.name,
