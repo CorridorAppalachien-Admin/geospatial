@@ -49,7 +49,7 @@ odoo.define("base_geoengine.BackgroundLayers", function(require) {
          * @returns {Array} - backgound layers
          */
         create: function(layersCfg) {
-            var out = [];
+            var out = [[]];
             _.each(
                 layersCfg,
                 function(l) {
@@ -115,35 +115,34 @@ odoo.define("base_geoengine.BackgroundLayers", function(require) {
 
                         source_opt.tileGrid = new ol.tilegrid.WMTS(tilegrid_opt);
                         layer_opt.source = new ol.source.WMTS(source_opt);
-                        out.push(new ol.layer.Tile(layer_opt));
+                        out.push([l.sequence, new ol.layer.Tile(layer_opt)]);
                     } else {
                         switch (l.raster_type) {
                             case "osm":
-                                console.log("geoengine_commion OSM LAYER");
-                                out.push(
+                                out.push([l.sequence,
                                     new ol.layer.Tile({
                                         title: l.name,
                                         visible: !l.overlay,
                                         type: "base",
                                         source: new ol.source.OSM(),
-                                    })
+                                    })]
                                 );
                                 break;
                             case "d_wms":
-                                console.log("geoengine_commion WMS LAYER");
-                                out.push(
+                               out.push([l.sequence,
                                     new ol.layer.Image({
-                                        title: "Relief",
+                                        title: l.name,
                                         source: new ol.source.ImageWMS( {
-                                            url: 'https://geoegl.msp.gouv.qc.ca/ws/mffpecofor.fcgi',
+                                            url: l.wms_url,
                                             params: {
-                                                'layers': 'lidar_ombre',
-                                                'crs': 'EPSG:2950',
-                                                'format': 'image/png',
+                                                'layers': l.wms_layers,
+                                                'crs': l.wms_crs,
+                                                'format': l.wms_format,
                                             }
                                         }),
-                                    })
+                                    })]
                                 );
+
                                 break;
                             default:
                                 var customLayers = this.handleCustomLayers(l);
@@ -155,7 +154,18 @@ odoo.define("base_geoengine.BackgroundLayers", function(require) {
                     }
                 }.bind(this)
             );
-            return out;
+            // Sort layers according to "sequence" attribute
+            var out_sorted = [];
+            var sortedArray = out.sort(function(a, b) {
+                return b[0] - a[0];
+            });
+            for (var i = 0; i < sortedArray.length; i++) {
+                if (sortedArray[i][1]) {
+                    out_sorted.push(sortedArray[i][1]);
+                }
+
+            }
+            return out_sorted;
         },
 
         // To be overridden in geoengine extensions
