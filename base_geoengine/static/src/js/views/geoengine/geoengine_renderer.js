@@ -207,11 +207,15 @@ odoo.define("base_geoengine.GeoengineRenderer", function(require) {
          * @returns {jQueryElement} a jquery element <tbody>
          */
         _renderMap: function() {
-            proj4.defs("EPSG:32188","+proj=tmerc +lat_0=0 +lon_0=-73.5 +k=0.9999 +x_0=304800 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs +type=crs");
-            ol.proj.setProj4(proj4);
-
             if (_.isUndefined(this.map)) {
-                this.zoomToExtentCtrl = new ol.control.ZoomToExtent();
+                // Get the "Default map extent" from the GeoEngine Data view setting and set it for the ZoomToExtent control
+                var defaultExtent_temp = this.mapOptions.geoengine_layers.default_extent.replace(' ', '').split(',');
+                var defaultExtent = [];
+                for (var i=0; i < defaultExtent_temp.length; i++) {
+                    defaultExtent.push(parseFloat(defaultExtent_temp[i]));
+                }
+                console.log(defaultExtent)
+                this.zoomToExtentCtrl = new ol.control.ZoomToExtent({extent: defaultExtent});
                 var backgrounds = this.mapOptions.geoengine_layers.backgrounds;
                 this.map = new ol.Map({
                     layers: [
@@ -223,7 +227,7 @@ odoo.define("base_geoengine.GeoengineRenderer", function(require) {
                     target: "olmap",
                     view: new ol.View({
                         center: [0, 0],
-                        zoom: 2,
+                        zoom: 12,
                         projection: 'EPSG:32188'
                     }),
                     controls: ol.control
@@ -679,6 +683,7 @@ odoo.define("base_geoengine.GeoengineRenderer", function(require) {
             // Zoom to data extent
             if (data.length) {
                 var extent = vectorLayers[0].getSource().getExtent();
+                console.log("EXTENT", extent);
                 this.zoomToExtentCtrl.extent_ = extent;
                 this.zoomToExtentCtrl.changed();
 
