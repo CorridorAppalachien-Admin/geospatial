@@ -348,9 +348,9 @@ odoo.define("base_geoengine.GeoengineRenderer", function(require) {
                 }
             });
             this.vectorSources.push(vectorSource);
-            if (cfg.layer_opacity) {
-                lv.setOpacity(cfg.layer_opacity);
-            }
+            // if (cfg.layer_opacity) {
+            //     lv.setOpacity(cfg.layer_opacity);
+            // }
             return lv;
         },
 
@@ -364,10 +364,12 @@ odoo.define("base_geoengine.GeoengineRenderer", function(require) {
         },
 
         _styleVectorLayerColored: function(cfg, data) {
+            console.log("opacity", cfg.layer_opacity);
             var indicator = cfg.attribute_field_id[1];
             var values = this._extractLayerValues(cfg, data);
             var nb_class = cfg.nb_class || DEFAULT_NUM_CLASSES;
-            var opacity = 0.8;
+            // var opacity = 0.8;
+            var opacity = cfg.layer_opacity;
             var begin_color_hex = cfg.begin_color || DEFAULT_BEGIN_COLOR;
             var end_color_hex = cfg.end_color || DEFAULT_END_COLOR;
             var begin_color = chroma(begin_color_hex)
@@ -469,7 +471,8 @@ odoo.define("base_geoengine.GeoengineRenderer", function(require) {
             var minVal = serie.min();
             var maxVal = serie.max();
             // TODO to be defined on cfg
-            var opacity = 0.8;
+            // var opacity = 0.8;
+            var opacity = cfg.layer_opacity;
             var color_hex = cfg.begin_color || DEFAULT_BEGIN_COLOR;
             var color = chroma(color_hex)
                 .alpha(opacity)
@@ -513,7 +516,8 @@ odoo.define("base_geoengine.GeoengineRenderer", function(require) {
 
         _styleVectorLayerDefault: function(cfg, data) {
             // TODO to be defined on cfg
-            var opacity = 0.8;
+            // var opacity = 0.8;
+            var opacity = cfg.layer_opacity;
             var color_hex = cfg.begin_color || DEFAULT_BEGIN_COLOR;
             var color = chroma(color_hex)
                 .alpha(opacity)
@@ -523,7 +527,7 @@ odoo.define("base_geoengine.GeoengineRenderer", function(require) {
                 color: color,
             });
             var stroke = new ol.style.Stroke({
-                color: "#333333",
+                color: "#111111",
                 width: 2,
             });
             var olStyleText = new ol.style.Text({
