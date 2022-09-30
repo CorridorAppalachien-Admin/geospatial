@@ -69,16 +69,18 @@ odoo.define("base_geoengine.geoengine_widgets", function(require) {
         _createVectorLayer: function() {
             this.features = new ol.Collection();
             this.source = new ol.source.Vector({features: this.features});
+            var color = chroma('#ee9900')
+                .alpha(0.3)
+                .css();
             return new ol.layer.Vector({
                 source: this.source,
                 style: new ol.style.Style({
                     fill: new ol.style.Fill({
-                        color: "#ee9900",
-                        opacity: 0.4,
+                        color: color
                     }),
                     stroke: new ol.style.Stroke({
-                        color: "#ee9900",
-                        width: 3,
+                        color: "#111111",
+                        width: 2,
                         opacity: 1,
                     }),
                     image: new ol.style.Circle({
