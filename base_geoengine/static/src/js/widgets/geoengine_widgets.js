@@ -94,8 +94,9 @@ odoo.define("base_geoengine.geoengine_widgets", function(require) {
         },
 
         _createLayers: function(field_infos) {
+            console.log("fielinfos", field_infos);
             this.vectorLayer = this._createVectorLayer();
-            this.rasterLayers = this.bgLayers.create([field_infos.edit_raster]);
+            this.rasterLayers = this.bgLayers.create([field_infos.edit_raster[0], field_infos.edit_raster[1]]);
             if (this.rasterLayers.length) {
                 this.rasterLayers[0].isBaseLayer = true;
             }
@@ -317,6 +318,7 @@ odoo.define("base_geoengine.geoengine_widgets", function(require) {
                 args: [this.name],
             }).then(
                 function(result) {
+                    console.log("asdasd", result);
                     this._createLayers(result);
                     this.geoType = result.geo_type;
                     this.projection = result.projection;
