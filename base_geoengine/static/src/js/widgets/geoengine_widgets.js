@@ -67,8 +67,6 @@ odoo.define("base_geoengine.geoengine_widgets", function(require) {
         // --------------------------------------------------------------------
 
         _createVectorLayer: function() {
-            console.log("as111dasd", this);
-
             this.features = new ol.Collection();
             this.source = new ol.source.Vector({features: this.features});
             var color = chroma('#ee9900')
