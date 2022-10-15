@@ -134,6 +134,7 @@ odoo.define("base_geoengine.GeoengineRenderer", function(require) {
             this.qweb = new QWeb(session.debug, {_s: session.origin}, false);
 
             this.viewInfo = params.viewInfo;
+            console.log("params", params);
             this.mapOptions = {
                 geoengine_layers: params.viewInfo.geoengine_layers,
             };

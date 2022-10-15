@@ -67,6 +67,8 @@ odoo.define("base_geoengine.geoengine_widgets", function(require) {
         // --------------------------------------------------------------------
 
         _createVectorLayer: function() {
+            console.log("as111dasd", this);
+
             this.features = new ol.Collection();
             this.source = new ol.source.Vector({features: this.features});
             var color = chroma('#ee9900')
@@ -94,9 +96,13 @@ odoo.define("base_geoengine.geoengine_widgets", function(require) {
         },
 
         _createLayers: function(field_infos) {
-            console.log("fielinfos", field_infos);
             this.vectorLayer = this._createVectorLayer();
-            this.rasterLayers = this.bgLayers.create([field_infos.edit_raster[0], field_infos.edit_raster[1]]);
+            var rastersToAdd = []
+            for (let i = 0; i < field_infos.edit_raster.length; i++) {
+                rastersToAdd.push(field_infos.edit_raster[i]);
+            }
+            this.rasterLayers = this.bgLayers.create(rastersToAdd);
+            // this.rasterLayers = this.bgLayers.create([field_infos.edit_raster[0], field_infos.edit_raster[1]]);
             if (this.rasterLayers.length) {
                 this.rasterLayers[0].isBaseLayer = true;
             }
@@ -318,7 +324,6 @@ odoo.define("base_geoengine.geoengine_widgets", function(require) {
                 args: [this.name],
             }).then(
                 function(result) {
-                    console.log("asdasd", result);
                     this._createLayers(result);
                     this.geoType = result.geo_type;
                     this.projection = result.projection;
