@@ -202,7 +202,13 @@ odoo.define('base_geoengine.GeoengineRenderer', function (require) {
          */
         _renderMap: function () {
             if (_.isUndefined(this.map)) {
-                this.zoomToExtentCtrl = new ol.control.ZoomToExtent();
+                // Get the "Default map extent" from the GeoEngine Data view setting and set it for the ZoomToExtent control
+                var defaultExtent_temp = this.mapOptions.geoengine_layers.default_extent.replace(' ', '').split(',');
+                var defaultExtent = [];
+                for (var i=0; i < defaultExtent_temp.length; i++) {
+                    defaultExtent.push(parseFloat(defaultExtent_temp[i]));
+                }
+                this.zoomToExtentCtrl = new ol.control.ZoomToExtent({extent: defaultExtent});
                 var backgrounds = this.mapOptions.geoengine_layers.backgrounds;
                 this.map = new ol.Map({
                     layers: [new ol.layer.Group({

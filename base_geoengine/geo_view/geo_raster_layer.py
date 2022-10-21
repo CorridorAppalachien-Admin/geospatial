@@ -33,6 +33,14 @@ class GeoRasterLayer(models.Model):
 
     # technical field to display or not wmts options
     is_wmts = fields.Boolean(compute="_compute_is_wmts")
+    is_d_wms = fields.Boolean(compute="_compute_is_d_wms")
+
+    # d_wms options
+    wms_url = fields.Char("WMS Base URL", help="eg. https://geoegl.msp.gouv.qc.ca/ws/mffpecofor.fcgi")
+    wms_layers = fields.Char("Layers")
+    wms_crs = fields.Char("CRS", help="eg. EPSG:32188")
+    wms_format = fields.Char("WMS Format", help="eg. image/png")
+
     # wmts options
     matrix_set = fields.Char("matrixSet")
     format_suffix = fields.Char("formatSuffix", help="eg. png")
@@ -75,4 +83,18 @@ class GeoRasterLayer(models.Model):
     @api.onchange("raster_type")
     def onchange_set_wmts_options(self):
         """ Abstract method for WMTS modules to set default options """
-        pass
+
+    # d_wms
+    @api.depends("raster_type", "is_d_wms")
+    def _compute_has_type(self):
+        for rec in self:
+            rec.has_type = rec.raster_type == "is_d_wms"
+
+    @api.depends("raster_type")
+    def _compute_is_d_wms(self):
+        for rec in self:
+            rec.is_d_wms = rec.raster_type == "d_wms"
+
+    @api.onchange("raster_type")
+    def onchange_set_d_wms_options(self):
+        """ Abstract method for WMTS modules to set default options """

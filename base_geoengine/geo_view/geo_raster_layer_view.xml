@@ -29,11 +29,39 @@
                   <field name="dimensions"/>
                   <field name="params"/>
                 </group>
-                <field name="has_type" invisible="1"/>
-                <group string="Layer data"
-                       attrs="{'invisible': [('has_type', '=', False)]}"
-                       colspan="4">
-                  <field name="type_id" widget="selection" attrs="{'required': [('has_type', '=', True)]}"/>
+
+
+                <field name="is_d_wms" invisible="1" />
+                <group
+                    string="Distant WMS options"
+                    attrs="{'invisible': [('is_d_wms', '=', False)]}"
+                    colspan="4"
+                >
+
+                  <field
+                        name="wms_url"
+                        widget="url"
+                        attrs="{'required': [('is_d_wms', '=', True)]}"
+                    />
+                  <field
+                        name="wms_layers"
+                        attrs="{'required': [('is_d_wms', '=', True)]}"
+                    />
+                  <field name="wms_crs" />
+                  <field name="wms_format" />
+                </group>
+
+                <field name="has_type" invisible="1" />
+                <group
+                    string="Layer data"
+                    attrs="{'invisible': [('has_type', '=', False)]}"
+                    colspan="4"
+                >
+                  <field
+                        name="type_id"
+                        widget="selection"
+                        attrs="{'required': [('has_type', '=', True)]}"
+                    />
                 </group>
                 <group string="Odoo layer data (Not implemented)"
                        attrs="{'invisible': [('raster_type', '!=', 'odoo')]}"
