@@ -11,7 +11,7 @@ odoo.define('base_geoengine.geoengine_common', function () {
     "use strict";
 
     /* ---------------------------------------------------------
-     * Odoo geoengine view
+     * Odoo geoengine viewf
      * ---------------------------------------------------------
      */
 
