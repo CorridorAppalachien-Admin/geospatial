@@ -212,7 +212,8 @@ odoo.define('base_geoengine.GeoengineRenderer', function (require) {
                     target: 'olmap',
                     view: new ol.View({
                         center: [0, 0],
-                        zoom: 2,
+                        zoom: 12,
+                        projection: 'EPSG:32188'
                     }),
                     controls: ol.control.defaults().extend([
                         new ol.control.FullScreen(),
@@ -345,11 +346,16 @@ odoo.define('base_geoengine.GeoengineRenderer', function (require) {
             var indicator = cfg.attribute_field_id[1];
             var values = this._extractLayerValues(cfg, data);
             var nb_class = cfg.nb_class || DEFAULT_NUM_CLASSES;
-            var opacity = 0.8;
+            // var opacity = 0.8;
+            var opacity = cfg.layer_opacity;
             var begin_color_hex = cfg.begin_color || DEFAULT_BEGIN_COLOR;
             var end_color_hex = cfg.end_color || DEFAULT_END_COLOR;
-            var begin_color = chroma(begin_color_hex).alpha(opacity).css();
-            var end_color = chroma(end_color_hex).alpha(opacity).css();
+            var begin_color = chroma(begin_color_hex)
+                .alpha(opacity)
+                .css();
+            var end_color = chroma(end_color_hex)
+                .alpha(opacity)
+                .css();
             var scale = chroma.scale([begin_color, end_color]);
             var serie = new geostats(values);
             var vals = null;
@@ -434,9 +440,12 @@ odoo.define('base_geoengine.GeoengineRenderer', function (require) {
             var minVal = serie.min();
             var maxVal = serie.max();
             // TODO to be defined on cfg
-            var opacity = 0.8;
+            // var opacity = 0.8;
+            var opacity = cfg.layer_opacity;
             var color_hex = cfg.begin_color || DEFAULT_BEGIN_COLOR;
-            var color = chroma(color_hex).alpha(opacity).css();
+            var color = chroma(color_hex)
+                .alpha(opacity)
+                .css();
             var fill = new ol.style.Fill({
                 color: color,
             });
@@ -476,7 +485,8 @@ odoo.define('base_geoengine.GeoengineRenderer', function (require) {
 
         _styleVectorLayerDefault: function (cfg, data) {
             // TODO to be defined on cfg
-            var opacity = 0.8;
+            // var opacity = 0.8;
+            var opacity = cfg.layer_opacity;
             var color_hex = cfg.begin_color || DEFAULT_BEGIN_COLOR;
             var color = chroma(color_hex).alpha(opacity).css();
             // Basic
@@ -811,18 +821,60 @@ odoo.define('base_geoengine.GeoengineRenderer', function (require) {
                 var id = $(event.currentTarget).data('id');
                 var ids = $(event.currentTarget).data('ids');
                 if (id) {
-                    this.trigger_up(
-                        'open_record', {id: id, target: event.target}
-                    );
+                    this.trigger_up("open_record", {id: id, target: event.target});
                 } else if (ids.length) {
+
+                    // Open a new Tree view showing the spatial selection
+                    var self = this;
+                    this._rpc({
+                        model: 'ir.model.data',
+                        method: 'check_object_reference',
+                        args: ["odoo-cartes", "cartes_view_tree"],
+                        })
+                        .then(function (data) {
+                            self.do_action({
+                            name: 'Sélection spatiale',
+                            type: 'ir.actions.act_window',
+                            view_mode: 'kanban,tree,form',
+                            res_model: 'cartes.carte',
+                            domain: [['id', 'in', ids]],
+                            views: [[false, 'kanban'], [data[1], 'list'], [false, 'form']],
+                            target: 'current',
+                        });
+});
+
+                    // var self = this;
+                    // self.do_action({
+                    //     type: 'ir.actions.act_window',
+                    //     name: 'Sélection spatiale',
+                    //     res_model: 'cartes.carte',
+                    //     views: [[false, 'tree'], [false, 'form']],
+                    //     search_view_id: [false],
+                    //     domain: [['id', '=', ids], ],
+                    // })
+
+                    // this._rpc({
+                    //     model: 'cartes.carte',
+                    //     method: 'open_view_tree',
+                    //     args: [ids],
+                    //     domain: [['id', '=', ids]],
+                    //     }).then()
+
+                        // this._rpc({
+                        // model: 'cartes.carte',
+                        // method: 'open_view_tree',
+                        // args: ['cartes.carte', $(event.currentTarget).data("ids")],
+                        // domain: [['id', '=', ids]],
+                        // }).then()
+
                     // TODO restore "Geo selection" item in search view field
                     // using icon fa-map-o currently the selection cannot be
                     // cancelled as it was in Odoo 10.0
-                    this.trigger_up('search', {
-                        domains: [[['id', 'in', ids]]],
-                        contexts: [],
-                        groupbys: [],
-                    });
+                    // this.trigger_up("search", {
+                    //     domains: [[["id", "in", ids]]],
+                    //     contexts: [],
+                    //     groupbys: [],
+                    // });
                 }
             }
         },
