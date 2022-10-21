@@ -17,12 +17,12 @@ odoo.define('base_geoengine.geoengine_widgets', function (require) {
     var field_registry = require('web.field_registry');
     var fields = require("web.basic_fields");
 
-    
+
     var inherits = function (subClass, superClass) {
         if (typeof superClass !== "function" && superClass !== null) {
         throw new TypeError("Super expression must either be null or a function, not " + typeof superClass);
         }
-    
+
         subClass.prototype = Object.create(superClass && superClass.prototype, {
         constructor: {
             value: subClass,
@@ -35,7 +35,7 @@ odoo.define('base_geoengine.geoengine_widgets', function (require) {
     };
 
     var FieldGeoEngineEditMap = AbstractField.extend(geoengine_common.GeoengineMixin, { // eslint-disable-line max-len
-    
+
         template: 'FieldGeoEngineEditMap',
 
         geoType: null,
@@ -64,6 +64,7 @@ odoo.define('base_geoengine.geoengine_widgets', function (require) {
             // Add a listener on parent tab if it exists in order to refresh
             // geoengine view we need to trigger it on DOM update for changes
             // from view to edit mode.
+            console.log("thewaht");
             core.bus.on('DOM_updated', this, function () {
                 this._addTabListener();
             }.bind(this));
