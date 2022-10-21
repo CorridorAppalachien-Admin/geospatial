@@ -17,21 +17,21 @@ odoo.define('base_geoengine.geoengine_common', function () {
 
     var GeoengineMixin = {
         cssLibs: [
-            // '/base_geoengine/static/lib/ol-4.6.5/ol.css',
+            '/base_geoengine/static/lib/ol-4.6.5/ol.css',
             // '/base_geoengine/static/lib/ol-6.5.0/ol.css',
-            '/base_geoengine/static/lib/ol-5.3.3/ol.css',
+            // '/base_geoengine/static/lib/ol-5.3.3/ol.css',
             '/base_geoengine/static/lib/ol3-layerswitcher.css',
             // '/base_geoengine/static/lib/geostats-1.4.0/geostats.css',
             '/base_geoengine/static/lib/geostats-2.0.0/geostats.css',
         ],
         jsLibs: [
-            // '/base_geoengine/static/lib/ol-4.6.5/ol-debug.js',
+            '/base_geoengine/static/lib/ol-4.6.5/ol-debug.js',
             // '/base_geoengine/static/lib/ol-6.5.0/ol.js',
-            '/base_geoengine/static/lib/ol-5.3.3/ol.js',
+            // '/base_geoengine/static/lib/ol-5.3.3/ol.js',
             '/base_geoengine/static/lib/ol3-layerswitcher.js',
             '/base_geoengine/static/lib/chromajs-0.8.0/chroma.js',
-            // '/base_geoengine/static/lib/geostats-1.4.0/geostats.js',
-            '/base_geoengine/static/lib/geostats-2.0.0/geostats.js',
+            '/base_geoengine/static/lib/geostats-1.4.0/geostats.js',
+            // '/base_geoengine/static/lib/geostats-2.0.0/geostats.js',
         ],
     };
 
