@@ -57,21 +57,26 @@ odoo.define('base_geoengine.BackgroundLayers', function (require) {
          *                            objects
          * @returns {Array} - backgound layers
          */
-        create: function (layersCfg) {
-            var out = [];
-            _.each(layersCfg, function (l) {
-                if (l.is_wmts) {
-                    var source_opt = {
-                        layer: l.name,
-                        matrixSet: l.matrix_set,
-                        style: 'default',
-                    };
-                    var tilegrid_opt = {};
-                    var layer_opt = {
-                        title: l.name,
-                        visible: !l.overlay,
-                        type: 'base',
-                    };
+        create: function(layersCfg) {
+            proj4.defs("EPSG:32188","+proj=tmerc +lat_0=0 +lon_0=-73.5 +k=0.9999 +x_0=304800 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs +type=crs");
+            ol.proj.setProj4(proj4);
+
+            var out = [[]];
+            _.each(
+                layersCfg,
+                function(l) {
+                    if (l.is_wmts) {
+                        var source_opt = {
+                            layer: l.name,
+                            matrixSet: l.matrix_set,
+                            style: "default",
+                        };
+                        var tilegrid_opt = {};
+                        var layer_opt = {
+                            title: l.name,
+                            visible: !l.overlay,
+                            type: "base",
+                        };
 
                     var urls = l.url.split(',');
                     if (urls.length > 1) {
@@ -119,37 +124,65 @@ odoo.define('base_geoengine.BackgroundLayers', function (require) {
                         source_opt.dimensions = JSON.parse(l.params);
                     }
 
-                    source_opt.tileGrid = new ol.tilegrid.WMTS(tilegrid_opt);
-                    layer_opt.source = new ol.source.WMTS(source_opt);
-                    out.push(new ol.layer.Tile(layer_opt));
-                } else {
-                    switch (l.raster_type) {
-                    case "osm":
-                        out.push(
-                            new ol.layer.Tile({
-                                title: l.name,
-                                visible: !l.overlay,
-                                type: 'base',
-                                source: new ol.source.OSM(),
-                            })
-                        );
-                        break;
-                    default:
-                        var customLayers = this.handleCustomLayers(l);
-                        if (customLayers.length) {
-                            out = out.concat(customLayers);
+                        source_opt.tileGrid = new ol.tilegrid.WMTS(tilegrid_opt);
+                        layer_opt.source = new ol.source.WMTS(source_opt);
+                        out.push([l.sequence, new ol.layer.Tile(layer_opt)]);
+                    } else {
+                        switch (l.raster_type) {
+                            case "osm":
+                                out.push([l.sequence,
+                                    new ol.layer.Tile({
+                                        title: l.name,
+                                        visible: !l.overlay,
+                                        type: "base",
+                                        source: new ol.source.OSM(),
+                                    })]
+                                );
+                                break;
+                            case "d_wms":
+                               out.push([l.sequence,
+                                    new ol.layer.Image({
+                                        title: l.name,
+                                        source: new ol.source.ImageWMS( {
+                                            url: l.wms_url,
+                                            params: {
+                                                'layers': l.wms_layers,
+                                                'crs': l.wms_crs,
+                                                'format': l.wms_format,
+                                            }
+                                        }),
+                                    })]
+                                );
+
+                                break;
+                            default:
+                                var customLayers = this.handleCustomLayers(l);
+                                if (customLayers.length) {
+                                    out = out.concat(customLayers);
+                                }
+                                break;
                         }
-                        break;
                     }
+                }.bind(this)
+            );
+            // Sort layers according to "sequence" attribute
+            var out_sorted = [];
+            var sortedArray = out.sort(function(a, b) {
+                return b[0] - a[0];
+            });
+            for (var i = 0; i < sortedArray.length; i++) {
+                if (sortedArray[i][1]) {
+                    out_sorted.push(sortedArray[i][1]);
                 }
-            }.bind(this));
-            return out;
+
+            }
+            return out_sorted;
         },
 
         // To be overridden in geoengine extensions
         handleCustomLayers: function(layer) {
             return [];
-        }
+        },
     });
 
     return BackgroundLayers;
