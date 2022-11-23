@@ -121,14 +121,17 @@ class GeoModel(models.AbstractModel):
             )
         view = self._get_geo_view()
         raster = raster_obj.search(
-            [("view_id", "=", view.id), ("use_to_edit", "=", True)], limit=1
+            [("view_id", "=", view.id), ("use_to_edit", "=", True)]
         )
         if not raster:
             raster = raster_obj.search([("view_id", "=", view.id)], limit=1)
         if not raster:
             raise MissingError(_("No raster layer for view %s") % (view.name,))
+        edit_rasters = []
+        for rasters in raster.read():
+            edit_rasters.append(rasters)
         return {
-            "edit_raster": raster.read()[0],
+            "edit_raster": edit_rasters,
             "geo_type": field.geo_type,
             "srid": field.srid,
             "projection": view.projection,

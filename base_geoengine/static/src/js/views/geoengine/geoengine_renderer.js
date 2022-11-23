@@ -405,7 +405,7 @@ odoo.define('base_geoengine.GeoengineRenderer', function (require) {
                     color: color,
                 });
                 var stroke = new ol.style.Stroke({
-                    color: '#333333',
+                    color: '#000000',
                     width: 2,
                 });
                 var styles = [
