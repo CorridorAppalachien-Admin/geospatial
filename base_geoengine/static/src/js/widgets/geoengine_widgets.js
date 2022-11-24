@@ -361,7 +361,7 @@ odoo.define('base_geoengine.geoengine_widgets', function (require) {
 
     var FieldGeoEngineEditMapMulti = AbstractField.extend(geoengine_common.GeoengineMixin, { // eslint-disable-line max-len
 
-        template: 'FieldGeoEngineEditMap',
+        template: 'FieldGeoEngineEditMapMulti',
 
         geoType: null,
         map: null,
@@ -375,7 +375,6 @@ odoo.define('base_geoengine.geoengine_widgets', function (require) {
         modifyControl: null,
         tabListenerInstalled: false,
         bgLayers: new BackgroundLayers(),
-
 
         // --------------------------------------------------------------------
         // Public
@@ -407,7 +406,6 @@ odoo.define('base_geoengine.geoengine_widgets', function (require) {
         // --------------------------------------------------------------------
 
         _createVectorLayer: function () {
-            console.log("this.nodeOptions.title", this);
             this.features = new ol.Collection();
             this.source = new ol.source.Vector({features: this.features});
             // var color_hex = cfg.begin_color || DEFAULT_BEGIN_COLOR;
@@ -503,7 +501,6 @@ odoo.define('base_geoengine.geoengine_widgets', function (require) {
         _setValue: function (value, zoom) {
 
             this._super(value);
-            console.log("valueeee", value);
             this.value = value;
 
             if (this.map) {
@@ -512,8 +509,14 @@ odoo.define('base_geoengine.geoengine_widgets', function (require) {
                     geometry: new ol.format.GeoJSON().readGeometry(value),
                     labelPoint:  new ol.format.GeoJSON().readGeometry(value),
                 });
+                var ft2 = new ol.Feature({
+                    geometry: new ol.format.GeoJSON().readGeometry(value).simplify(25),
+                    labelPoint:  new ol.format.GeoJSON().readGeometry(value).simplify(25),
+                });
+                console.log(this.value);
                 this.source.clear();
                 this.source.addFeature(ft);
+                this.source.addFeature(ft2);
                 if (value) {
                     this._updateMapZoom(zoom);
                 } else {
@@ -592,7 +595,6 @@ odoo.define('base_geoengine.geoengine_widgets', function (require) {
             this.drawControl.on('drawend', onchange_geom);
 
             this.features = this.source.getFeaturesCollection();
-
             this.modifyControl = new ol.interaction.Modify({
                 features: this.features,
                 // The SHIFT key must be pressed to delete vertices, so
@@ -647,7 +649,6 @@ odoo.define('base_geoengine.geoengine_widgets', function (require) {
                         projection: 'EPSG:32188',
                     }),
                 });
-                console.log("feateures", this.features);
                 this.map.addLayer(this.vectorLayer);
 
                 this.format = new ol.format.GeoJSON({
@@ -942,6 +943,7 @@ odoo.define('base_geoengine.geoengine_widgets', function (require) {
 
     return {
         FieldGeoEngineEditMap: FieldGeoEngineEditMap,
+        FieldGeoEngineEditMapMulti: FieldGeoEngineEditMapMulti,
     //    FieldGeoPointXY: FieldGeoPointXY,
     //    FieldGeoPointXYReadonly: FieldGeoPointXYReadonly,
     //    FieldGeoRect: FieldGeoRect,

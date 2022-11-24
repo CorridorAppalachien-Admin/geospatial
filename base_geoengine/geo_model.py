@@ -115,10 +115,10 @@ class GeoModel(models.AbstractModel):
         raster_obj = self.env["geoengine.raster.layer"]
 
         field = self._fields.get(column)
-        if not field or not isinstance(field, geo_fields.GeoField):
-            raise ValueError(
-                _("%s column does not exists or is not a geo field") % column
-            )
+        # if not field or not isinstance(field, geo_fields.GeoField):
+        #     raise ValueError(
+        #         _("%s column does not exists or is not a geo field") % column
+        #     )
         view = self._get_geo_view()
         raster = raster_obj.search(
             [("view_id", "=", view.id), ("use_to_edit", "=", True)]

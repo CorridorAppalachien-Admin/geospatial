@@ -274,6 +274,11 @@ class GeoMultiPolygon(GeoField):
     type = "geo_multi_polygon"
     geo_type = "MULTIPOLYGON"
 
+class GeoMany2many(GeoField):
+    """Field for POSTGIS geometry MultiPolygon type"""
+
+    type = "geo_many2many"
+    geo_type = "MULTIPOLYGON"
 
 fields.GeoLine = GeoLine
 fields.GeoPoint = GeoPoint
@@ -281,3 +286,4 @@ fields.GeoPolygon = GeoPolygon
 fields.GeoMultiLine = GeoMultiLine
 fields.GeoMultiPoint = GeoMultiPoint
 fields.GeoMultiPolygon = GeoMultiPolygon
+fields.GeoMany2many = GeoMany2many
