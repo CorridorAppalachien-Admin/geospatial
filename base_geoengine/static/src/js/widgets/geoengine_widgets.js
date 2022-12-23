@@ -37,7 +37,6 @@ odoo.define('base_geoengine.geoengine_widgets', function (require) {
     var FieldGeoEngineEditMap = AbstractField.extend(geoengine_common.GeoengineMixin, { // eslint-disable-line max-len
 
         template: 'FieldGeoEngineEditMap',
-
         geoType: null,
         map: null,
         defaultExtent: null,
@@ -81,6 +80,7 @@ odoo.define('base_geoengine.geoengine_widgets', function (require) {
         // --------------------------------------------------------------------
 
         _createVectorLayer: function () {
+            // console.log(this.state.data)
             this.features = new ol.Collection();
             this.source = new ol.source.Vector({features: this.features});
             // var color_hex = cfg.begin_color || DEFAULT_BEGIN_COLOR;
@@ -671,10 +671,12 @@ odoo.define('base_geoengine.geoengine_widgets', function (require) {
 
         _render: function () {
             this._rpc({
-                model: this.model,
+                model: this.nodeOptions.model,
                 method: 'get_edit_info_for_geo_column',
-                args: [this.name],
+                args: [this.nodeOptions.geo_column],
             }).then(function (result) {
+                console.log("result", result);
+                console.log("this", this)
                 this._createLayers(result);
                 this.geoType = result.geo_type;
                 this.projection = result.projection;

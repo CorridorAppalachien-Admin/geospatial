@@ -45,6 +45,7 @@ class GeoModel(models.AbstractModel):
         geo_view = self.env["ir.ui.view"].search(
             [("model", "=", self._name), ("type", "=", "geoengine")], limit=1
         )
+        print("geoview", geo_view)
         if not geo_view:
             raise except_orm(
                 _("No GeoEngine view defined for the model %s") % self._name,
@@ -138,7 +139,40 @@ class GeoModel(models.AbstractModel):
             "restricted_extent": view.restricted_extent,
             "default_extent": view.default_extent or DEFAULT_EXTENT,
             "default_zoom": view.default_zoom,
+
         }
+
+    @api.model
+    def get_edit_multi_info_for_geo_column(self, column):
+        raster_obj = self.env["geoengine.raster.layer"]
+
+        field = self._fields.get(column)
+        # if not field or not isinstance(field, geo_fields.GeoField):
+        #     raise ValueError(
+        #         _("%s column does not exists or is not a geo field") % column
+        #     )
+        view = self._get_geo_view()
+        raster = raster_obj.search(
+            [("view_id", "=", view.id), ("use_to_edit", "=", True)]
+        )
+        if not raster:
+            raster = raster_obj.search([("view_id", "=", view.id)], limit=1)
+        if not raster:
+            raise MissingError(_("No raster layer for view %s") % (view.name,))
+        edit_rasters = []
+        for rasters in raster.read():
+            edit_rasters.append(rasters)
+        return {
+            "edit_raster": edit_rasters,
+            "geo_type": field.geo_type,
+            "srid": field.srid,
+            "projection": view.projection,
+            "restricted_extent": view.restricted_extent,
+            "default_extent": view.default_extent or DEFAULT_EXTENT,
+            "default_zoom": view.default_zoom,
+
+        }
+
 
     @api.model
     def geo_search(
