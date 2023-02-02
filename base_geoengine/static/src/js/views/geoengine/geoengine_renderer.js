@@ -130,7 +130,6 @@ odoo.define('base_geoengine.GeoengineRenderer', function (require) {
          */
         init: function (parent, state, params) {
             this._super.apply(this, arguments);
-
             this.qweb = new QWeb(session.debug, {_s: session.origin}, false);
 
             this.viewInfo = params.viewInfo;
@@ -823,6 +822,7 @@ odoo.define('base_geoengine.GeoengineRenderer', function (require) {
         // --------------------------------------------------------------------
 
         _onInfoBoxClicked: function (event) {
+            var model = this.viewInfo.model
             if (!$(event.target).prop('special_click')) {
                 var id = $(event.currentTarget).data('id');
                 var ids = $(event.currentTarget).data('ids');
@@ -832,22 +832,33 @@ odoo.define('base_geoengine.GeoengineRenderer', function (require) {
 
                     // Open a new Tree view showing the spatial selection
                     var self = this;
-                    this._rpc({
-                        model: 'ir.model.data',
-                        method: 'check_object_reference',
-                        args: ["odoo-cartes", "cartes_view_tree"],
-                        })
-                        .then(function (data) {
-                            self.do_action({
-                            name: 'Sélection spatiale',
-                            type: 'ir.actions.act_window',
-                            view_mode: 'kanban,tree,form',
-                            res_model: 'cartes.carte',
-                            domain: [['id', 'in', ids]],
-                            views: [[false, 'kanban'], [data[1], 'list'], [false, 'form']],
-                            target: 'current',
-                        });
-});
+                    self.do_action({
+                        name: 'Sélection spatiale',
+                        type: 'ir.actions.act_window',
+                        view_mode: 'kanban,tree,form',
+                        res_model: model,
+                        domain: [['id', 'in', ids]],
+                        views: [[false, 'kanban'], [false, 'list'], [false, 'form']],
+                        target: 'current',
+                    });
+
+                    // this._rpc({
+                    //     model: 'ir.model.data',
+                    //     method: 'check_object_reference',
+                    //     args: ["odoo-cartes", "cartes_view_tree"],
+                    //     })
+                    //     .then(function (data) {
+                    //         console.log("erererer", data);
+                    //         self.do_action({
+                    //             name: 'Sélection spatiale',
+                    //             type: 'ir.actions.act_window',
+                    //             view_mode: 'kanban,tree,form',
+                    //             res_model: model,
+                    //             domain: [['id', 'in', ids]],
+                    //             views: [[false, 'kanban'], [false, 'list'], [false, 'form']],
+                    //             target: 'current',
+                    //         });
+                    //     });
 
                     // var self = this;
                     // self.do_action({
